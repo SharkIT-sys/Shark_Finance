@@ -1,0 +1,14 @@
+CHANGELOG – SHARK CONTABILIDAD
+
+--------------------------------------------------
+
+[1.0] - 2026
+
+- Lanzamiento inicial del proyecto
+- Sistema de gestión financiera local
+- Almacenamiento de datos en dispositivo
+- Sin telemetría ni conexiones externas
+
+--------------------------------------------------
+
+Formato basado en buenas prácticas de control de versiones.

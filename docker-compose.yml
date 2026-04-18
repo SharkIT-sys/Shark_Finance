@@ -1,0 +1,16 @@
+services:
+  shark-contabilidad:
+    build: .
+    container_name: shark-contabilidad
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - shark_data:/data
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-cambia_esto_por_una_clave_segura}
+      - DATA_DIR=/data
+
+volumes:
+  shark_data:
+    driver: local

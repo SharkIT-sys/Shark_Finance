@@ -1,0 +1,21 @@
+POLÍTICA DE PRIVACIDAD – SHARK CONTABILIDAD
+Versión 1.1 – 2026
+
+Autor: SharkIT
+
+--------------------------------------------------
+
+Este software está diseñado para funcionar de manera local.
+
+- No recopila datos personales
+- No envía información a servidores externos
+- No incluye sistemas de analítica ni telemetría
+
+Todos los datos generados por el usuario permanecen en su dispositivo.
+
+El usuario es responsable de:
+- La protección de sus datos
+- La realización de copias de seguridad
+- La configuración de cualquier sistema externo de sincronización
+
+El autor no tiene acceso a la información del usuario en ningún momento.

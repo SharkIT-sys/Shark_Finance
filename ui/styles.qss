@@ -1,0 +1,251 @@
+/* Main Application Background and Font */
+QWidget {
+    background-color: #121212;
+    color: #E0E0E0;
+    font-family: 'Segoe UI', 'Inter', 'Roboto', sans-serif;
+    font-size: 14px;
+}
+
+/* Sidebar Styling */
+#sidebar {
+    background-color: #1D1D27;
+    border-right: 1px solid #2C2C35;
+}
+
+#sidebar QPushButton {
+    background-color: transparent;
+    color: #A0A0A0;
+    border: none;
+    padding: 15px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    margin: 5px 10px;
+}
+
+#sidebar QPushButton:hover {
+    background-color: #2A2A35;
+    color: #FFFFFF;
+}
+
+#sidebar QPushButton:checked {
+    background-color: #3498DB;
+    color: #FFFFFF;
+}
+
+/* Dashboard Cards */
+QFrame.card {
+    background-color: #1E1E24;
+    border-radius: 12px;
+    border: 1px solid #2C2C35;
+    min-height: 80px;
+}
+
+#card-income { border-bottom: 4px solid #2ECC71; max-height: 110px; }
+#card-expense { border-bottom: 4px solid #E74C3C; max-height: 110px; }
+#card-balance { border-bottom: 4px solid #3498DB; max-height: 110px; }
+
+QLabel.card-title {
+    color: #A0A0A0;
+    font-size: 16px;
+    font-weight: bold;
+    qproperty-alignment: 'AlignCenter';
+    padding: 0px;
+    margin-top: 5px;
+}
+
+QLabel.card-value {
+    font-size: 36px;
+    font-weight: 800;
+    qproperty-alignment: 'AlignCenter';
+    margin-bottom: 5px;
+}
+
+QLabel.positive-value {
+    color: #2ECC71;
+}
+
+QLabel.negative-value {
+    color: #E74C3C;
+}
+
+/* Inputs and Comboboxes */
+QLineEdit, QComboBox, QDateEdit, QSpinBox {
+    background-color: #2A2A35;
+    border: 1px solid #3A3A45;
+    border-radius: 6px;
+    padding: 8px;
+    color: #FFFFFF;
+    min-height: 22px;
+}
+
+QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QSpinBox:focus {
+    border: 1px solid #3498DB;
+}
+
+/* Buttons */
+QPushButton[class="action-btn"] {
+    background-color: #3498DB;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: bold;
+}
+
+QPushButton[class="action-btn"]:hover {
+    background-color: #2980B9;
+}
+
+QPushButton.action-btn {
+    background-color: #3498DB;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: bold;
+}
+
+QPushButton.action-btn:hover {
+    background-color: #2980B9;
+}
+
+/* Table Action Buttons — compact, readable inside table cells */
+QPushButton[role="table-pay"] {
+    background-color: #27AE60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    min-height: 28px;
+}
+
+QPushButton[role="table-pay"]:hover {
+    background-color: #219A52;
+}
+
+QPushButton[role="table-delete"] {
+    background-color: #E74C3C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    min-height: 28px;
+}
+
+QPushButton[role="table-delete"]:hover {
+    background-color: #C0392B;
+}
+
+QPushButton[role="table-link"] {
+    background-color: #8E44AD;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    min-height: 28px;
+}
+
+QPushButton[role="table-link"]:hover {
+    background-color: #732D91;
+}
+
+/* Inline link section for commitment */
+#commitment-link-box {
+    background-color: #1A1A28;
+    border: 1px solid #3A3A55;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+/* Table Widget */
+QTableWidget {
+    background-color: #1E1E24;
+    gridline-color: #2C2C35;
+    border: 1px solid #2C2C35;
+    border-radius: 8px;
+    color: #E0E0E0;
+}
+
+QHeaderView::section {
+    background-color: #2A2A35;
+    color: #A0A0A0;
+    font-weight: bold;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #2C2C35;
+}
+
+QTableWidget::item {
+    padding: 6px;
+    border-bottom: 1px solid #2C2C35;
+}
+
+QTableWidget::item:selected {
+    background-color: #3498DB;
+    color: white;
+}
+
+/* Progress Bar inside tables */
+QProgressBar {
+    background-color: #2A2A35;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    min-height: 22px;
+}
+
+QProgressBar::chunk {
+    background-color: #3498DB;
+    border-radius: 5px;
+}
+
+/* CheckBox */
+QCheckBox {
+    color: #A0A0A0;
+    font-size: 13px;
+    spacing: 6px;
+}
+
+QCheckBox:checked {
+    color: #FFFFFF;
+}
+
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 2px solid #3A3A55;
+    background-color: #2A2A35;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #3498DB;
+    border: 2px solid #3498DB;
+}
+
+/* ScrollBar */
+QScrollBar:vertical {
+    background: #1E1E24;
+    width: 8px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background: #3A3A55;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}

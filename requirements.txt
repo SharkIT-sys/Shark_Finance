@@ -1,0 +1,6 @@
+PyQt6
+matplotlib
+python-dateutil
+cryptography
+pypiwin32
+winshell

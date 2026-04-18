@@ -1,0 +1,37 @@
+CONTRIBUTING – SHARK CONTABILIDAD
+Versión 1.0 – 2026
+
+Autor: SharkIT
+
+--------------------------------------------------
+
+Gracias por tu interés en contribuir a este proyecto.
+
+NORMAS GENERALES
+
+- Mantener el código claro y documentado
+- Seguir la estructura existente del proyecto
+- Evitar añadir dependencias innecesarias
+- Priorizar simplicidad y rendimiento
+
+PROCESO DE CONTRIBUCIÓN
+
+1. Realizar un fork del proyecto
+2. Crear una rama con tu mejora o corrección
+3. Describir claramente los cambios realizados
+4. Enviar un pull request
+
+TIPOS DE CONTRIBUCIÓN ACEPTADAS
+
+- Corrección de errores
+- Mejoras de rendimiento
+- Mejoras de interfaz
+- Refactorización de código
+
+NO SE ACEPTA
+
+- Código mal documentado
+- Cambios que comprometan la privacidad del usuario
+- Funcionalidades que introduzcan dependencia externa innecesaria
+
+El autor se reserva el derecho de aceptar o rechazar contribuciones.

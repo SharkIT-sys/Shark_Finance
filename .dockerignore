@@ -1,0 +1,50 @@
+# Archivos de build desktop
+build/
+dist/
+*.spec
+
+# Base de datos local (no se incluye en la imagen)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+.env
+
+# Archivos de desarrollo / IDE
+.aider*
+.vscode/
+.idea/
+*.swp
+
+# Módulos UI (desktop only, no necesarios en la imagen)
+ui/
+
+# Archivos generados
+generar_icono.py
+crear_ejecutable.bat
+icono.ico
+update_logo.py
+web_app/generate_icons.py
+web_app/update_logo.py
+
+# Git
+.git/
+.gitignore
+
+# Scripts de despliegue
+deploy.ps1
+
+# Logs
+*.log
