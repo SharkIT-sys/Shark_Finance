@@ -7,16 +7,21 @@ from PyQt6.QtCore import Qt, QDate
 from utils.translator import tr
 
 class TransactionView(QWidget):
-    def __init__(self, t_type, controller):
+    def __init__(self, t_type, controller, main_window=None):
         super().__init__()
         self.t_type = t_type
         self.controller = controller
+        self.main_window = main_window
         self.categories = []
         self.transactions = []  # cached for edit dialog lookup
         
         self.init_ui()
         self.load_categories()
         self.load_transactions()
+
+    def _notify_dashboard(self):
+        if self.main_window and hasattr(self.main_window, 'dashboard_view'):
+            self.main_window.dashboard_view.refresh_data()
 
     @staticmethod
     def _is_recurring_tx(tx):
@@ -224,6 +229,7 @@ class TransactionView(QWidget):
         self.name_input.clear()
         self.amount_input.clear()
         self.load_transactions()
+        self._notify_dashboard()
 
     def show_edit_dialog(self, t_id):
         tx = next((t for t in self.transactions if t.id == t_id), None)
@@ -280,14 +286,14 @@ class TransactionView(QWidget):
         d_duration.setSuffix(f" {tr('TIMES')}")
         d_duration.setValue(tx.recurrence_duration or 1)
 
-        form.addRow(tr("NAME_LABEL"), d_name)
-        form.addRow(tr("AMOUNT_LABEL"), d_amount)
-        form.addRow(tr("CATEGORY_LABEL"), d_cat)
-        form.addRow(tr("DATE_LABEL"), d_date)
-        form.addRow(tr("TYPE_LABEL"), d_rec_type)
-        form.addRow(tr("EVERY_LABEL"), d_interval)
-        form.addRow(tr("DURATION_LABEL"), d_dur_type)
-        form.addRow(tr("FOR_LABEL"), d_duration)
+        form.addRow(tr("NAME_LABEL", "Nombre:"), d_name)
+        form.addRow(tr("AMOUNT_LABEL", "Importe (€):"), d_amount)
+        form.addRow(tr("CATEGORY_LABEL", "Categoría:"), d_cat)
+        form.addRow(tr("DATE_LABEL", "Fecha:"), d_date)
+        form.addRow(tr("TYPE_LABEL", "Tipo:"), d_rec_type)
+        form.addRow(tr("EVERY_LABEL", "Cada:"), d_interval)
+        form.addRow(tr("DURATION_LABEL", "Duración:"), d_dur_type)
+        form.addRow(tr("FOR_LABEL", "Por:"), d_duration)
 
         def sync_rec_fields():
             recurring = d_rec_type.currentText() == tr("RECURRING")
@@ -333,6 +339,7 @@ class TransactionView(QWidget):
 
             self.controller.update_transaction(t_id, cat_id, name, amt, date_str, r_type, r_interval, r_duration)
             self.load_transactions()
+            self._notify_dashboard()
             dialog.accept()
 
         save_btn.clicked.connect(save)
@@ -347,3 +354,4 @@ class TransactionView(QWidget):
         if reply == QMessageBox.StandardButton.Yes:
             self.controller.delete_transaction(t_id)
             self.load_transactions()
+            self._notify_dashboard()

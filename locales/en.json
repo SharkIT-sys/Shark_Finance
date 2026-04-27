@@ -252,5 +252,20 @@
     "MANUAL_Q12_A": "Unlike commitments, savings goals serve to accumulate money. Every contribution counts as an expense in the monthly balance so you don't count on that money in your day-to-day, but it is displayed here as progress towards your goal. You can have goals with a 'ceiling' (e.g., buying a phone) or 'no ceiling' (e.g., infinite emergency fund).",
     "MANUAL_Q13_T": "🔄 Automatic Bidirectional Sync",
     "MANUAL_Q13_A": "The crown jewel of Docker deployment. When you deploy the server from 'Server Center', your linked app and the Server enter into Symbiosis. When you turn on your PC, it downloads new data from the server (what you entered on mobile). When you close the PC app, it uploads everything to the server. Without touching anything, your data is always optimized and up to date.",
-    "ENTER_SSH_ADDRESS": "Enter remote server SSH address"
+    "ENTER_SSH_ADDRESS": "Enter remote server SSH address",
+    "RECURRING_EXPENSES": "Recurring Expenses",
+    "ONETIME_EXPENSES": "One-time Expenses",
+    "SELECT_MONTH": "Select a month to view its expenses",
+    "NO_ONETIME_MONTH": "No one-time expenses this month.",
+    "ADD_RECURRING": "Add Recurring Expense",
+    "ADD_ONETIME": "Add One-time Expense",
+    "EDIT_CATEGORY": "Edit Category",
+    "NAME_LABEL": "Name:",
+    "AMOUNT_LABEL": "Amount (€):",
+    "CATEGORY_LABEL": "Category:",
+    "DATE_LABEL": "Date:",
+    "TYPE_LABEL": "Type:",
+    "EVERY_LABEL": "Every:",
+    "DURATION_LABEL": "Duration:",
+    "FOR_LABEL": "For:"
 }

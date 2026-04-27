@@ -160,6 +160,16 @@ class DBManager:
             self._mark_updated(conn)
             conn.commit()
 
+    def update_category(self, cat_id, name, c_type, color):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                'UPDATE categories SET name=?, type=?, color=? WHERE id=?',
+                (name, c_type, color, cat_id)
+            )
+            self._mark_updated(conn)
+            conn.commit()
+
     def add_transaction(self, t_type, category_id, name, amount, date, r_type='one_time', r_interval=1, r_duration=None):
         enc_name = self.crypto.encrypt(name)
         enc_amount = self.crypto.encrypt(str(amount))
@@ -434,7 +444,33 @@ class DBManager:
                 r_list[2] = decrypted_amount
                 decrypted_rows.append(tuple(r_list))
             return decrypted_rows
-            
+
+    def get_all_commitment_payments_decrypted(self):
+        """Returns all commitment payments across all commitments, decrypted."""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM commitment_payments ORDER BY date DESC')
+            rows = cursor.fetchall()
+
+            decrypted_rows = []
+            for r in rows:
+                r_list = list(r)
+                try:
+                    decrypted_amount = float(self.crypto.decrypt(str(r_list[2])))
+                except ValueError:
+                    decrypted_amount = 0.0
+                r_list[2] = decrypted_amount
+                decrypted_rows.append(tuple(r_list))
+            return decrypted_rows
+
+    def delete_commitment_payment(self, payment_id):
+        """Delete a single commitment payment by its ID."""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM commitment_payments WHERE id = ?', (payment_id,))
+            self._mark_updated(conn)
+            conn.commit()
+
     # --- SAVINGS / HUCHAS ---
     def add_savings_goal(self, name, target_amount, date):
         enc_name = self.crypto.encrypt(name)

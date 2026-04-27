@@ -1,12 +1,13 @@
 import os
 import sys
-from PyQt6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, 
+from PyQt6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout,
                              QPushButton, QStackedWidget, QLabel)
 from PyQt6.QtGui import QPixmap, QIcon
 from PyQt6.QtCore import Qt
 
 from ui.dashboard_view import DashboardView
 from ui.transaction_view import TransactionView
+from ui.expense_view import ExpenseView
 from ui.category_view import CategoryView
 from ui.historic_view import HistoricView
 from ui.financial_health_view import FinancialHealthView
@@ -20,9 +21,10 @@ class MainWindow(QMainWindow):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        
+
         self.setWindowTitle("Shark " + tr("ACCOUNTING", "Contabilidad"))
         self.resize(1000, 700)
+        self.setMinimumSize(800, 500)
         
         # Set Window Icon
         icon_path = os.path.join(os.path.dirname(__file__), "resources", "logo.png")
@@ -45,25 +47,26 @@ class MainWindow(QMainWindow):
         # Sidebar
         sidebar = QWidget()
         sidebar.setObjectName("sidebar")
-        sidebar.setFixedWidth(250)
+        sidebar.setMinimumWidth(180)
+        sidebar.setMaximumWidth(300)
         sidebar_layout = QVBoxLayout()
-        sidebar_layout.setContentsMargins(0, 20, 0, 20)
+        sidebar_layout.setContentsMargins(5, 10, 5, 10)
+        sidebar_layout.setSpacing(2)
         sidebar.setLayout(sidebar_layout)
-        
+
         # Logo placeholder (can be updated to an image)
         self.logo_label = QLabel()
         logo_path = os.path.join(os.path.dirname(__file__), "resources", "logo.png")
         if os.path.exists(logo_path):
             pixmap = QPixmap(logo_path)
-            # scale the pixmap to width 200, keep aspect ratio smooth
-            self.logo_label.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+            self.logo_label.setPixmap(pixmap.scaled(120, 120, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         else:
             self.logo_label.setText("SHARK\n" + tr("ACCOUNTING", "CONTABILIDAD"))
-            self.logo_label.setStyleSheet("color: white; font-size: 28px; font-weight: bold;")
+            self.logo_label.setStyleSheet("color: white; font-size: 20px; font-weight: bold;")
         self.logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         sidebar_layout.addWidget(self.logo_label)
-        
-        sidebar_layout.addSpacing(30)
+
+        sidebar_layout.addSpacing(10)
         
         # Navigation Buttons
         self.btn_dashboard = QPushButton(tr("DASHBOARD"))
@@ -100,18 +103,18 @@ class MainWindow(QMainWindow):
         sidebar_layout.addWidget(self.btn_commitments)
         sidebar_layout.addWidget(self.btn_savings)
         sidebar_layout.addStretch()
-        
-        self.btn_manual = QPushButton(f'📖 {tr("HELP")} (Manual)')
-        self.btn_manual.setStyleSheet("background-color: transparent; border: none; text-align: left; padding-left: 20px; font-size: 14px; color: #E0E0E0;")
+
+        self.btn_manual = QPushButton(f'📖 {tr("HELP")}')
+        self.btn_manual.setStyleSheet("background-color: transparent; border: none; text-align: left; padding-left: 15px; padding: 8px; font-size: 12px; color: #E0E0E0;")
         sidebar_layout.addWidget(self.btn_manual)
-        
+
         self.btn_server = QPushButton(f'🌐 {tr("SERVER_CENTER")}')
-        self.btn_server.setStyleSheet("background-color: transparent; border: none; text-align: left; padding-left: 20px; font-size: 14px; color: #F1C40F;")
+        self.btn_server.setStyleSheet("background-color: transparent; border: none; text-align: left; padding-left: 15px; padding: 8px; font-size: 12px; color: #F1C40F;")
         sidebar_layout.addWidget(self.btn_server)
-        
+
         # Settings Button
         self.btn_settings = QPushButton(f'⚙ {tr("SETTINGS_ADVANCED")}')
-        self.btn_settings.setStyleSheet("background-color: transparent; border: none; text-align: left; padding-left: 20px; font-size: 14px; color: #E0E0E0;")
+        self.btn_settings.setStyleSheet("background-color: transparent; border: none; text-align: left; padding-left: 15px; padding: 8px; font-size: 12px; color: #E0E0E0;")
         sidebar_layout.addWidget(self.btn_settings)
 
         
@@ -135,8 +138,8 @@ class MainWindow(QMainWindow):
         
         # Initialize views
         self.dashboard_view = DashboardView(self.controller)
-        self.income_view = TransactionView("income", self.controller)
-        self.expense_view = TransactionView("expense", self.controller)
+        self.income_view = TransactionView("income", self.controller, main_window=self)
+        self.expense_view = ExpenseView(self.controller, main_window=self)
         self.category_view = CategoryView(self.controller)
         self.historic_view = HistoricView(self.controller)
         self.health_view = FinancialHealthView(self.controller)

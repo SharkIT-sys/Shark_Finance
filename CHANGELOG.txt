@@ -2,6 +2,15 @@ CHANGELOG – SHARK CONTABILIDAD
 
 --------------------------------------------------
 
+[1.1] - 2026-04-27
+
+- Dashboard Rediseñado: Gráfico de tarta más grande y limpio con etiquetas internas.
+- Agrupación por Categorías: Las porciones ahora muestran el total por categoría general.
+- Desglose Interactivo (Tooltips): Información detallada de gastos al pasar el ratón sobre el gráfico.
+- Optimizaciones de UI: Eliminación de solapamiento de etiquetas y mejora del aprovechamiento de espacio.
+
+--------------------------------------------------
+
 [1.0] - 2026
 
 - Lanzamiento inicial del proyecto

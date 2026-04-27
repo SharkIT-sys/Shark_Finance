@@ -39,6 +39,9 @@ class FinanceController:
     def delete_category(self, cat_id):
         self.db.delete_category(cat_id)
 
+    def update_category(self, cat_id, name, c_type, color):
+        self.db.update_category(cat_id, name, c_type, color)
+
     def get_transactions(self, t_type=None):
         rows = self.db.get_transactions(t_type)
         return [Transaction.from_db_row(row) for row in rows]
@@ -97,7 +100,25 @@ class FinanceController:
         self.db.update_transaction(t_id, category_id, name, amount, date, new_type, new_interval, new_duration)
 
     def delete_transaction(self, t_id):
+        # Before deleting, check if this expense has a matching commitment payment
+        tx = self.get_transaction_by_id(t_id)
+        if tx and tx.type == 'expense':
+            self._remove_matching_commitment_payment(tx.amount, tx.date)
         self.db.delete_transaction(t_id)
+
+    def _remove_matching_commitment_payment(self, amount, date):
+        """
+        Find and remove a single commitment payment that matches the given
+        amount and date. This reverses the money deducted from the commitment.
+        Uses a tolerance of 0.01 for float comparison.
+        """
+        all_payments = self.db.get_all_commitment_payments_decrypted()
+        for pay in all_payments:
+            # pay tuple: (id, commitment_id, amount, date)
+            pay_id, _, pay_amount, pay_date = pay
+            if pay_date == date and abs(pay_amount - amount) < 0.01:
+                self.db.delete_commitment_payment(pay_id)
+                return  # Only remove ONE matching payment
 
     def get_transactions_for_month(self, year, month):
         """

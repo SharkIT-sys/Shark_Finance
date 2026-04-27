@@ -10,18 +10,19 @@ QWidget {
 #sidebar {
     background-color: #1D1D27;
     border-right: 1px solid #2C2C35;
+    min-width: 150px;
 }
 
 #sidebar QPushButton {
     background-color: transparent;
     color: #A0A0A0;
     border: none;
-    padding: 15px;
+    padding: 10px 12px;
     text-align: left;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
-    border-radius: 8px;
-    margin: 5px 10px;
+    border-radius: 6px;
+    margin: 3px 8px;
 }
 
 #sidebar QPushButton:hover {
@@ -248,4 +249,36 @@ QScrollBar::handle:vertical {
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
+}
+
+/* Tab Widget */
+QTabWidget::pane {
+    border: 1px solid #2C2C35;
+    border-radius: 8px;
+    background-color: #121212;
+    top: -1px;
+}
+
+QTabBar::tab {
+    background-color: #1D1D27;
+    color: #A0A0A0;
+    border: 1px solid #2C2C35;
+    border-bottom: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 10px 20px;
+    margin-right: 2px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+QTabBar::tab:selected {
+    background-color: #121212;
+    color: #FFFFFF;
+    border-bottom: 3px solid #3498DB;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #2A2A35;
+    color: #FFFFFF;
 }

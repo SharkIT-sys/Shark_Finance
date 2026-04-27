@@ -78,11 +78,11 @@ class DashboardView(QWidget):
         layout.addLayout(cards_layout)
         
         # Horizontal Bar Chart Layout (Expense vs Income %)
-        self.bar_fig = Figure(figsize=(8, 1.5), facecolor='#1E1E24')
+        self.bar_fig = Figure(figsize=(8, 1.4), facecolor='#1E1E24')
         self.bar_fig.patch.set_facecolor('#1E1E24')
         self.bar_canvas = FigureCanvas(self.bar_fig)
         self.bar_canvas.setStyleSheet("background-color: transparent;")
-        self.bar_canvas.setFixedHeight(120)
+        self.bar_canvas.setFixedHeight(110)
         self.bar_ax = self.bar_fig.add_subplot(111)
         self.bar_ax.set_facecolor('#1E1E24')
         layout.addWidget(self.bar_canvas)
@@ -116,16 +116,21 @@ class DashboardView(QWidget):
 
         self.quick_expenses_scroll = QScrollArea()
         self.quick_expenses_scroll.setWidgetResizable(True)
-        self.quick_expenses_scroll.setMinimumHeight(210)
+        self.quick_expenses_scroll.setMinimumHeight(260)
+        self.quick_expenses_scroll.setMaximumHeight(320)
         self.quick_expenses_scroll.setStyleSheet("QScrollArea { border: none; background-color: transparent; }")
+        self.quick_expenses_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
 
         self.quick_expenses_container = QWidget()
         self.quick_expenses_layout = QVBoxLayout()
         self.quick_expenses_layout.setContentsMargins(0, 0, 0, 0)
-        self.quick_expenses_layout.setSpacing(8)
+        self.quick_expenses_layout.setSpacing(6)
         self.quick_expenses_container.setLayout(self.quick_expenses_layout)
         self.quick_expenses_scroll.setWidget(self.quick_expenses_container)
+
         quick_layout.addWidget(self.quick_expenses_scroll)
+
+        self.quick_expenses_container.setFixedWidth(280)
 
         left_column.addWidget(self.quick_expenses_card)
 
@@ -216,11 +221,7 @@ class DashboardView(QWidget):
     def update_expense_quick_view(self, summary):
         self._clear_quick_expenses()
 
-        expenses_breakdown = sorted(
-            summary['expenses_breakdown'],
-            key=lambda item: item['amount'],
-            reverse=True
-        )
+        expenses_breakdown = summary['expenses_breakdown']
         total_expense = summary['total_expense']
 
         if not expenses_breakdown:
@@ -231,40 +232,132 @@ class DashboardView(QWidget):
             self.quick_expenses_layout.addStretch()
             return
 
+        # Group by category keeping items
+        cat_data = {}
         for item in expenses_breakdown:
-            pct = (item['amount'] / total_expense) * 100 if total_expense > 0 else 0
-            category_name = item.get('category_name') or tr("UNKNOWN")
+            cat_name = item.get('category_name') or tr("UNKNOWN")
+            if cat_name not in cat_data:
+                cat_data[cat_name] = {'total': 0.0, 'items': []}
+            cat_data[cat_name]['total'] += item['amount']
+            cat_data[cat_name]['items'].append(item)
 
+        # Sort by amount descending
+        sorted_cats = sorted(cat_data.items(), key=lambda x: x[1]['total'], reverse=True)
+
+        for cat_name, data in sorted_cats:
+            cat_amount = data['total']
+            items = data['items']
+            pct = (cat_amount / total_expense) * 100 if total_expense > 0 else 0
+
+            # Main container for the category
+            cat_widget = QWidget()
+            cat_layout = QVBoxLayout()
+            cat_layout.setContentsMargins(0, 0, 0, 0)
+            cat_layout.setSpacing(0)
+            cat_widget.setLayout(cat_layout)
+
+            # Category Header Row (always visible)
             row = QFrame()
             row.setStyleSheet(
-                f"background-color: #25252E; border: 1px solid #2C2C35; "
-                f"border-left: 4px solid {item['color']}; border-radius: 10px;"
+                "QFrame { background-color: #25252E; border: 1px solid #2C2C35; "
+                "border-radius: 8px; }"
             )
             row_layout = QVBoxLayout()
             row_layout.setContentsMargins(10, 8, 10, 8)
             row_layout.setSpacing(4)
             row.setLayout(row_layout)
 
-            row_header = QHBoxLayout()
-            row_header.setContentsMargins(0, 0, 0, 0)
+            # Top line: category name (clickable) + amount
+            top_row = QHBoxLayout()
+            top_row.setSpacing(4)
 
-            name_lbl = QLabel(item['name'])
-            name_lbl.setWordWrap(True)
-            name_lbl.setStyleSheet("color: white; font-weight: bold;")
+            name_btn = QPushButton(f"▶ {cat_name}")
+            name_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            name_btn.setStyleSheet(
+                "QPushButton { color: #E0E0E0; font-weight: bold; font-size: 12px; "
+                "text-align: left; border: none; background: transparent; padding: 0; }"
+                "QPushButton:hover { color: #3498DB; }"
+            )
 
-            amount_lbl = QLabel(f"{item['amount']:.2f} \u20ac")
-            amount_lbl.setStyleSheet("color: #E74C3C; font-weight: bold;")
+            amount_lbl = QLabel(f"{cat_amount:.2f} \u20ac")
+            amount_lbl.setStyleSheet(
+                "color: #CF6679; font-weight: bold; font-size: 12px; "
+                "border: none; background: transparent;"
+            )
             amount_lbl.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
 
-            row_header.addWidget(name_lbl, 1)
-            row_header.addWidget(amount_lbl)
-            row_layout.addLayout(row_header)
+            top_row.addWidget(name_btn, 1)
+            top_row.addWidget(amount_lbl)
+            row_layout.addLayout(top_row)
 
-            meta_lbl = QLabel(f"{category_name} | {pct:.1f}%")
-            meta_lbl.setStyleSheet("color: #A0A0A0; font-size: 12px;")
-            row_layout.addWidget(meta_lbl)
+            # Bottom line: progress bar + percentage
+            bottom_row = QHBoxLayout()
+            bottom_row.setSpacing(6)
 
-            self.quick_expenses_layout.addWidget(row)
+            from PyQt6.QtWidgets import QProgressBar
+            bar = QProgressBar()
+            bar.setRange(0, 100)
+            bar.setValue(int(pct))
+            bar.setTextVisible(False)
+            bar.setFixedHeight(6)
+            bar.setStyleSheet(
+                "QProgressBar { background-color: #1A1A22; border-radius: 3px; border: none; }"
+                "QProgressBar::chunk { background-color: #8A8A9A; border-radius: 3px; }"
+            )
+
+            pct_lbl = QLabel(f"{pct:.1f}%")
+            pct_lbl.setStyleSheet(
+                "color: #707080; font-size: 10px; border: none; background: transparent;"
+            )
+            pct_lbl.setFixedWidth(40)
+            pct_lbl.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+
+            bottom_row.addWidget(bar, 1)
+            bottom_row.addWidget(pct_lbl)
+            row_layout.addLayout(bottom_row)
+
+            cat_layout.addWidget(row)
+
+            # Details container (hidden by default)
+            details_container = QFrame()
+            details_container.setStyleSheet(
+                "QFrame { background-color: #1A1A22; border-left: 2px solid #2C2C35; "
+                "border-right: 1px solid #2C2C35; border-bottom: 1px solid #2C2C35; "
+                "border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; "
+                "margin-top: -4px; margin-left: 4px; margin-right: 4px; }"
+            )
+            details_layout = QVBoxLayout()
+            details_layout.setContentsMargins(10, 8, 10, 8)
+            details_layout.setSpacing(4)
+            details_container.setLayout(details_layout)
+            details_container.setVisible(False)
+
+            for item in items:
+                item_row = QHBoxLayout()
+                
+                item_name = QLabel(f"• {item['name']}")
+                item_name.setStyleSheet("color: #A0A0A0; font-size: 11px; border: none; background: transparent;")
+                item_name.setWordWrap(True)
+                
+                item_amount = QLabel(f"{item['amount']:.2f} \u20ac")
+                item_amount.setStyleSheet("color: #CF6679; font-size: 11px; border: none; background: transparent;")
+                item_amount.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+                
+                item_row.addWidget(item_name, 1)
+                item_row.addWidget(item_amount)
+                details_layout.addLayout(item_row)
+
+            cat_layout.addWidget(details_container)
+            
+            # Toggle function
+            def toggle_details(checked=False, btn=name_btn, container=details_container, name=cat_name):
+                is_visible = container.isVisible()
+                container.setVisible(not is_visible)
+                btn.setText(f"▼ {name}" if not is_visible else f"▶ {name}")
+
+            name_btn.clicked.connect(toggle_details)
+
+            self.quick_expenses_layout.addWidget(cat_widget)
 
         self.quick_expenses_layout.addStretch()
 
@@ -277,21 +370,65 @@ class DashboardView(QWidget):
             self.pie_ax.text(0.5, 0.5, tr("NO_DATA", "Sin datos"), horizontalalignment='center', verticalalignment='center', color='white')
             self.pie_fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
         else:
-            labels = [c['name'] for c in expenses_breakdown]
-            sizes = [c['amount'] for c in expenses_breakdown]
-            colors = [c['color'] for c in expenses_breakdown]
+            # Group by category
+            cat_totals = {}
+            cat_colors = {}
+            cat_items = {}
+            for item in expenses_breakdown:
+                cat_name = item.get('category_name') or tr("UNKNOWN")
+                if cat_name not in cat_totals:
+                    cat_totals[cat_name] = 0.0
+                    cat_colors[cat_name] = item.get('color', '#3498DB')
+                    cat_items[cat_name] = []
+                cat_totals[cat_name] += item['amount']
+                cat_items[cat_name].append(item)
+                
+            labels = list(cat_totals.keys())
+            sizes = list(cat_totals.values())
+            colors = [cat_colors[lbl] for lbl in labels]
             
-            # Calculate percentages for labels manually to ensure visibility
             total = sum(sizes) if sum(sizes) > 0 else 1
-            labels_with_pct = [f"{name} ({(amount/total)*100:.1f}%)" for name, amount in zip(labels, sizes)]
+            labels_with_pct = [f"{lbl}\n({(sz/total)*100:.1f}%)" for lbl, sz in zip(labels, sizes)]
             
-            # Setup dark theme pie chart. Radius decreased to make pie smaller and names visible.
-            wedges, texts, autotexts = self.pie_ax.pie(
-                sizes, labels=labels_with_pct, colors=colors, autopct='',
-                startangle=90, radius=0.6, textprops=dict(color="w", fontsize=9)
+            # Create pie chart with larger radius
+            wedges, texts = self.pie_ax.pie(
+                sizes, labels=labels_with_pct, colors=colors,
+                startangle=90, radius=1.0, textprops=dict(color="w", fontsize=9, weight='bold')
             )
-            # Make sure it's a circle
             self.pie_ax.axis('equal') 
+            
+            # Setup tooltip annotation
+            annot = self.pie_ax.annotate("", xy=(0,0), xytext=(15,15), textcoords="offset points",
+                                         bbox=dict(boxstyle="round4,pad=0.5", fc="#25252E", ec="#3498DB", lw=1.5, alpha=0.95),
+                                         color="white", fontsize=9, zorder=100)
+            annot.set_visible(False)
+            
+            def hover(event):
+                vis = annot.get_visible()
+                if event.inaxes == self.pie_ax:
+                    for i, wedge in enumerate(wedges):
+                        cont, ind = wedge.contains(event)
+                        if cont:
+                            cat_name = labels[i]
+                            items = cat_items[cat_name]
+                            items.sort(key=lambda x: x['amount'], reverse=True)
+                            
+                            text = f"--- {cat_name} ---\n"
+                            for it in items:
+                                text += f"• {it['name']}: {it['amount']:.2f} \u20ac\n"
+                            
+                            annot.xy = (event.xdata, event.ydata)
+                            annot.set_text(text.strip())
+                            annot.set_visible(True)
+                            self.pie_canvas.draw_idle()
+                            return
+                if vis:
+                    annot.set_visible(False)
+                    self.pie_canvas.draw_idle()
+
+            if hasattr(self, '_pie_hover_cid'):
+                self.pie_canvas.mpl_disconnect(self._pie_hover_cid)
+            self._pie_hover_cid = self.pie_canvas.mpl_connect("motion_notify_event", hover)
             
         self.pie_fig.tight_layout()
         self.pie_canvas.draw()

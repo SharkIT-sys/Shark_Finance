@@ -14,6 +14,7 @@
 
 ## ✨ Características Principales
 
+* **Dashboard Dinámico e Interactivo**: Gráfico de tarta avanzado con agrupación por categorías, etiquetas internas de porcentaje y tooltips informativos que desglosan los gastos individuales al pasar el ratón.
 * **Cifrado Real AES-256**: Los campos de la base de datos (Ingresos, Gastos y Compromisos) no se guardan en texto plano. Están encriptados en crudo.
 * **Sistema de Protocolo Seguro**: Autodestrucción completa de la base de datos local y su directorio maestro a prueba de hackeos (5 intentos fallidos de autenticación).
 * **Compromisos y Planes de Pago**: No solo registras gastos pasados. El sistema de 'Compromisos' se adueña de tus deudas grandes o compras a plazos, calculando tu porcentaje pagado y el tiempo restante estimado matemáticamente para terminar tu deuda.
@@ -46,7 +47,12 @@ pip install -r requirements-web.txt
 python main.py
 
 # Auto-Empaquetar App para distribución (Windows)
-pyinstaller "Shark Contabilidad.spec" --clean -y
+crear_ejecutable.bat
+# O alternativamente: pyinstaller "Shark Contabilidad.spec" --clean -y
+
+# Auto-Empaquetar App para distribución (Linux / Fedora)
+chmod +x crear_ejecutable.sh
+./crear_ejecutable.sh
 ```
 
 ## ⚖️ Licencia

@@ -18,6 +18,13 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 # SECRET_KEY: leer desde variable de entorno para que las sesiones
 # sobrevivan reinicios del contenedor
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(32))
+sync_token_env = os.environ.get('SYNC_TOKEN')
+if not sync_token_env:
+    import uuid
+    sync_token_env = uuid.uuid4().hex
+    print(f"\n⚠️  SYNC_TOKEN no configurado. Usando token temporal: {sync_token_env}")
+    print("   Configure SYNC_TOKEN en producción para usar un token fijo.\n")
+os.environ['SYNC_TOKEN'] = sync_token_env
 
 # Database path: en Docker usa el volumen /data; en local usa ~/Shark Contabilidad
 data_dir = os.environ.get('DATA_DIR', os.path.join(os.path.expanduser('~'), 'Shark Contabilidad'))
@@ -42,7 +49,9 @@ def require_auth(f):
 # ── Static / PWA ───────────────────────────────────────────────────────────────
 @app.route('/')
 def index():
-    return send_from_directory('static', 'index.html')
+    response = send_from_directory('static', 'index.html')
+    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    return response
 
 @app.route('/manifest.json')
 def manifest():
@@ -51,6 +60,20 @@ def manifest():
 @app.route('/sw.js')
 def service_worker():
     response = send_from_directory('static', 'sw.js')
+    response.headers['Content-Type'] = 'application/javascript; charset=utf-8'
+    return response
+
+@app.route('/css/app.css')
+def css():
+    response = send_from_directory('static/css', 'app.css')
+    response.headers['Content-Type'] = 'text/css; charset=utf-8'
+    return response
+
+@app.route('/js/app.js')
+def js():
+    response = send_from_directory('static/js', 'app.js')
+    response.headers['Content-Type'] = 'application/javascript; charset=utf-8'
+    return response
     response.headers['Service-Worker-Allowed'] = '/'
     response.headers['Cache-Control'] = 'no-cache'
     return response
@@ -470,8 +493,8 @@ def require_sync_token(f):
         token = request.args.get('token') or request.headers.get('Authorization')
         if token and token.startswith('Bearer '):
             token = token[7:]
-        server_token = os.environ.get('SYNC_TOKEN')
-        if not server_token or token != server_token:
+        server_token = os.environ.get('SYNC_TOKEN') or os.environ.get('SYNC_TOKEN', 'no_token_configured')
+        if not server_token or server_token == 'no_token_configured' or token != server_token:
             return jsonify({'error': 'Invalid Sync Token'}), 403
         return f(*args, **kwargs)
     return decorated

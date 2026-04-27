@@ -23,7 +23,7 @@
   --shadow: 0 8px 32px rgba(0,0,0,0.4);
   --nav-h: 72px;
   --header-h: 58px;
-  --font: 'Inter', -apple-system, sans-serif;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* ── Reset ── */
@@ -343,6 +343,7 @@ input, button, select, textarea { font-family: var(--font); }
 .metric-row:last-child { border-bottom: none; }
 .metric-label { font-size: 13px; color: var(--text-2); }
 .metric-value { font-size: 14px; font-weight: 700; }
+.metric-icon { margin-right: 6px; }
 
 /* ══ BOTTOM NAV ══════════════════════════════════════════════ */
 .bottom-nav {

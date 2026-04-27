@@ -47,10 +47,14 @@ scp app.tar.gz ${SERVER}:~/
 Write-Host "[3/3] Desplegando en el servidor..."
 Write-Host ">>> TE VA A PEDIR LA CONTRASEÑA OTRA VEZ <<<" -ForegroundColor Yellow
 
-$INJECT_TOKEN = ""
-if ($SyncToken) {
-    $INJECT_TOKEN = "if grep -q SYNC_TOKEN .env; then sed -i 's/SYNC_TOKEN=.*/SYNC_TOKEN=$SyncToken/' .env; else echo `"SYNC_TOKEN=$SyncToken`" >> .env; fi &&"
+$INJECT_SECRETKEY = ""
+if (-not $SyncToken) {
+    $SyncToken = [guid]::NewGuid().ToString("N")
 }
+Write-Host "     SYNC_TOKEN: $SyncToken" -ForegroundColor Cyan
+
+$INJECT_SECRETKEY = "if grep -q '^SECRET_KEY=' .env; then :; else echo `"SECRET_KEY=`$(openssl rand -hex 32)`" >> .env; fi &&"
+$INJECT_TOKEN = "if grep -q '^SYNC_TOKEN=' .env; then sed -i 's/^SYNC_TOKEN=.*/SYNC_TOKEN=$SyncToken/' .env; else echo `"SYNC_TOKEN=$SyncToken`" >> .env; fi &&"
 
 $SSH_COMMAND = @"
     mkdir -p $DEST_DIR &&
@@ -58,7 +62,7 @@ $SSH_COMMAND = @"
     cd $DEST_DIR &&
     tar -xzf app.tar.gz &&
     rm app.tar.gz &&
-    if [ ! -f .env ]; then echo `"SECRET_KEY=`$(openssl rand -hex 32)`" > .env; fi &&
+    $INJECT_SECRETKEY
     $INJECT_TOKEN
     docker compose up -d --build &&
     if [ -f budget_app.db ]; then

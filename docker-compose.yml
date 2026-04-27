@@ -10,6 +10,7 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY:-cambia_esto_por_una_clave_segura}
       - DATA_DIR=/data
+      - SYNC_TOKEN=${SYNC_TOKEN}
 
 volumes:
   shark_data:

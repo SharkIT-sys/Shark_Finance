@@ -252,5 +252,20 @@
     "MANUAL_Q12_A": "A diferencia de los compromisos, las huchas sirven para acumular dinero. Cada aportación cuenta como un gasto en el balance mensual para que no cuentes con ese dinero en tu día a día, pero se visualiza aquí como progreso hacia tu meta. Puedes tener metas con 'techo' (ej: comprar un móvil) o 'sin techo' (ej: fondo de emergencia infinito).",
     "MANUAL_Q13_T": "🔄 Sincronización Bidireccional Automática",
     "MANUAL_Q13_A": "La joya de la corona del despliegue Docker. Al desplegar el servidor desde 'Centro de Servidores', tu aplicación vinculada y el Servidor entran en Simbiosis. Cuando enciendes el PC, este descarga las novedades del servidor (lo que hayas metido por el móvil). Cuando cierras el PC, sube todo al servidor. Sin tocar nada, tus datos están siempre optimizados y al día.",
-    "ENTER_SSH_ADDRESS": "Introduce la dirección SSH del servidor"
+    "ENTER_SSH_ADDRESS": "Introduce la dirección SSH del servidor",
+    "RECURRING_EXPENSES": "Gastos Recurrentes",
+    "ONETIME_EXPENSES": "Gastos Puntuales",
+    "SELECT_MONTH": "Selecciona un mes para ver sus gastos",
+    "NO_ONETIME_MONTH": "No hay gastos puntuales en este mes.",
+    "ADD_RECURRING": "Añadir Gasto Recurrente",
+    "ADD_ONETIME": "Añadir Gasto Puntual",
+    "EDIT_CATEGORY": "Editar Categoría",
+    "NAME_LABEL": "Nombre:",
+    "AMOUNT_LABEL": "Importe (€):",
+    "CATEGORY_LABEL": "Categoría:",
+    "DATE_LABEL": "Fecha:",
+    "TYPE_LABEL": "Tipo:",
+    "EVERY_LABEL": "Cada:",
+    "DURATION_LABEL": "Duración:",
+    "FOR_LABEL": "Por:"
 }

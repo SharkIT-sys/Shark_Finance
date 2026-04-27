@@ -1,11 +1,38 @@
 import hashlib
-from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, 
+from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton,
                              QMessageBox, QFrame, QFileDialog, QInputDialog, QScrollArea, QWidget, QComboBox)
 from PyQt6.QtCore import Qt
 from utils.translator import tr
 import shutil
 import sys
+import os
 from PyQt6.QtGui import QIcon
+
+def create_shortcuts():
+    try:
+        import winshell
+        from win32com.client import Dispatch
+
+        desktop = winshell.desktop()
+        startup = winshell.programs()
+        path = os.path.join(desktop, "Shark Contabilidad.lnk")
+        target = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath("main.py")
+
+        shell = Dispatch('WScript.Shell')
+        shortcut = shell.CreateShortCut(path)
+        shortcut.Targetpath = target
+        shortcut.WorkingDirectory = os.path.dirname(target)
+        shortcut.save()
+
+        start_path = os.path.join(startup, "Shark Contabilidad.lnk")
+        shortcut_start = shell.CreateShortCut(start_path)
+        shortcut_start.Targetpath = target
+        shortcut_start.WorkingDirectory = os.path.dirname(target)
+        shortcut_start.save()
+        return True
+    except Exception as e:
+        print("Shortcut error:", e)
+        return False
 
 class SettingsDialog(QDialog):
     def __init__(self, controller, parent=None):
@@ -156,6 +183,27 @@ class SettingsDialog(QDialog):
         btn_lang.clicked.connect(self.change_language)
         l_lang.addWidget(btn_lang)
         c_layout.addWidget(card_lang)
+
+        # --- Card Shortcuts ---
+        card_shortcut = QFrame()
+        card_shortcut.setStyleSheet("background-color: #1E1E24; border-radius: 12px; border: 1px solid #2C2C35; padding: 15px;")
+        l_shortcut = QVBoxLayout()
+        card_shortcut.setLayout(l_shortcut)
+
+        t_shortcut = QLabel(tr("CREATE_SHORTCUTS", "Crear Acceso Directo"))
+        t_shortcut.setStyleSheet("font-size: 16px; font-weight: bold; color: #3498DB;")
+        l_shortcut.addWidget(t_shortcut)
+
+        desc_shortcut = QLabel(tr("SHORTCUT_DESC", "Añade un acceso directo en el Escritorio y Menú Inicio"))
+        desc_shortcut.setWordWrap(True)
+        desc_shortcut.setStyleSheet("color: #A0A0A0; font-size: 12px; margin-bottom: 10px;")
+        l_shortcut.addWidget(desc_shortcut)
+
+        btn_shortcut = QPushButton(tr("CREATE_SHORTCUT_BTN", "Crear Acceso Directo"))
+        btn_shortcut.setStyleSheet("background-color: #3498DB; color: white; border: none; border-radius: 6px; padding: 10px; font-weight: bold;")
+        btn_shortcut.clicked.connect(self.create_desktop_shortcut)
+        l_shortcut.addWidget(btn_shortcut)
+        c_layout.addWidget(card_shortcut)
 
         # --- Card Legal ---
         card_legal = QFrame()
@@ -341,3 +389,14 @@ class SettingsDialog(QDialog):
             self.submit_btn.setText(tr("UPDATE_PWD"))
             self.old_pwd_input.clear()
             self.old_pwd_input.setFocus()
+
+    def create_desktop_shortcut(self):
+        if sys.platform != 'win32':
+            QMessageBox.warning(self, tr("ERROR"), "Esta función solo está disponible en Windows.")
+            return
+
+        success = create_shortcuts()
+        if success:
+            QMessageBox.information(self, tr("SUCCESS"), tr("SHORTCUT_CREATED", "Acceso directo creado correctamente en el Escritorio y Menú Inicio."))
+        else:
+            QMessageBox.warning(self, tr("ERROR"), tr("SHORTCUT_ERROR", "Error al crear el acceso directo."))
