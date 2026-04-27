@@ -22,6 +22,17 @@
 * **Universal 50/30/20 Rule**: The app diagnoses your economic health by assigning an automated monthly score from 0-100 to evaluate if you achieve the mythical balance of Needs / Wants / Savings.
 * **Extreme Portability and Flexibility**: Database export to external storage (USB) capable of restarting on another machine and requesting the original key to reveal balances.
 
+## 📸 Preview
+
+<p align="center">
+  <img src="screenshots/DashBoard.png" alt="Dashboard" width="400">
+  <img src="screenshots/Ingresos.png" alt="Incomes" width="400">
+</p>
+<p align="center">
+  <img src="screenshots/Compromisos.png" alt="Commitments" width="400">
+  <img src="screenshots/Ahorros.png" alt="Savings" width="400">
+</p>
+
 ## 📱 Integrated Server and PWA Web
 
 Your desktop client is not limited to the PC. It has an internal **Server Center** hub that with one click:

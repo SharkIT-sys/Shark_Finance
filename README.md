@@ -22,6 +22,17 @@
 * **Regla Universal 50/30/20**: La app diagnostica tu salud económica asignando una puntuación automatizada mensual de 0-100 para evaluar si cumples el mítico equilibrio de Necesidades / Caprichos / Ahorro.s.
 * **Portabilidad y Flexibilidad Extrema**: Exportación de bases de datos a almacenamiento externo (USB) capaz de reiniciarse en otra máquina y solicitar la clave original para revelar los balances.
 
+## 📸 Vista Previa
+
+<p align="center">
+  <img src="screenshots/DashBoard.png" alt="Dashboard" width="400">
+  <img src="screenshots/Ingresos.png" alt="Ingresos" width="400">
+</p>
+<p align="center">
+  <img src="screenshots/Compromisos.png" alt="Compromisos" width="400">
+  <img src="screenshots/Ahorros.png" alt="Ahorros" width="400">
+</p>
+
 ## 📱 Server Integrado y PWA Web
 
 Tu cliente de escritorio no está limitado al PC. Dispone de un hub interno **Centro de Servidores** que con un clic:
