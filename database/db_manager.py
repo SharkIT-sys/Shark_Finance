@@ -401,6 +401,16 @@ class DBManager:
             self._mark_updated(conn)
             conn.commit()
 
+    def update_commitment(self, c_id, name, total_amount, date):
+        enc_name = self.crypto.encrypt(name)
+        enc_amount = self.crypto.encrypt(str(total_amount))
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('UPDATE commitments SET name=?, total_amount=?, date=? WHERE id=?',
+                           (enc_name, enc_amount, date, c_id))
+            self._mark_updated(conn)
+            conn.commit()
+
     def add_commitment_payment(self, commitment_id, amount, date):
         enc_amount = self.crypto.encrypt(str(amount))
         with self.get_connection() as conn:

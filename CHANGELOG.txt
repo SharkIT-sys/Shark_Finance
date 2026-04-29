@@ -2,6 +2,18 @@ CHANGELOG – SHARK CONTABILIDAD
 
 --------------------------------------------------
 
+[1.2] - 2026-04-29
+
+- Edición de Compromisos: Ahora puedes editar el nombre, importe y fecha de tus compromisos financieros.
+- Splash Screen de Video: Nueva entrada animada al iniciar la aplicación tras el login.
+- Mejoras en Dashboard:
+    - Selector de tipo de gráfico en Tendencias (Líneas o Barras).
+    - Ajustes de dimensionamiento responsivo para gráficos en diferentes tamaños de ventana.
+- Instalación: Añadida opción en Ajustes para crear accesos directos en Escritorio y Menú Inicio (Windows).
+- Sincronización: Soporte mejorado para SYNC_TOKEN en despliegues con Docker.
+
+--------------------------------------------------
+
 [1.1] - 2026-04-27
 
 - Dashboard Rediseñado: Gráfico de tarta más grande y limpio con etiquetas internas.

@@ -1,7 +1,7 @@
 import datetime
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QFrame, QPushButton, QComboBox, QGridLayout, QMessageBox,
-                             QScrollArea)
+                             QScrollArea, QSizePolicy)
 from PyQt6.QtCore import Qt
 from utils.translator import tr, Translator
 
@@ -82,7 +82,9 @@ class DashboardView(QWidget):
         self.bar_fig.patch.set_facecolor('#1E1E24')
         self.bar_canvas = FigureCanvas(self.bar_fig)
         self.bar_canvas.setStyleSheet("background-color: transparent;")
-        self.bar_canvas.setFixedHeight(110)
+        self.bar_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.bar_canvas.setMinimumHeight(120)
+        self.bar_canvas.setMaximumHeight(160)
         self.bar_ax = self.bar_fig.add_subplot(111)
         self.bar_ax.set_facecolor('#1E1E24')
         layout.addWidget(self.bar_canvas)
@@ -95,10 +97,12 @@ class DashboardView(QWidget):
         left_column.setSpacing(12)
         
         # Pie Chart (Categories)
-        self.pie_fig = Figure(figsize=(5,4), facecolor='#1E1E24')
+        self.pie_fig = Figure(figsize=(6,5), facecolor='#1E1E24')
         self.pie_fig.patch.set_facecolor('#1E1E24')
         self.pie_canvas = FigureCanvas(self.pie_fig)
         self.pie_canvas.setStyleSheet("background-color: transparent;")
+        self.pie_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.pie_canvas.setMinimumHeight(250)
         self.pie_ax = self.pie_fig.add_subplot(111)
         self.pie_ax.set_facecolor('#1E1E24')
         left_column.addWidget(self.pie_canvas)
@@ -139,13 +143,31 @@ class DashboardView(QWidget):
         charts_layout.addWidget(left_widget, 1)
         
         # Line Chart (Trend)
+        trend_container = QWidget()
+        trend_layout = QVBoxLayout(trend_container)
+        trend_layout.setContentsMargins(0, 0, 0, 0)
+        trend_layout.setSpacing(5)
+        
+        trend_header = QHBoxLayout()
+        self.trend_type_combo = QComboBox()
+        self.trend_type_combo.addItems(["Líneas", "Barras"])
+        self.trend_type_combo.setStyleSheet("background-color: #2C2C35; color: white; border-radius: 4px; padding: 2px 8px;")
+        self.trend_type_combo.currentTextChanged.connect(self.update_line_chart)
+        trend_header.addStretch()
+        trend_header.addWidget(self.trend_type_combo)
+        trend_layout.addLayout(trend_header)
+
         self.line_fig = Figure(figsize=(6,4), facecolor='#1E1E24')
         self.line_fig.patch.set_facecolor('#1E1E24')
         self.line_canvas = FigureCanvas(self.line_fig)
         self.line_canvas.setStyleSheet("background-color: transparent;")
+        self.line_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.line_canvas.setMinimumHeight(250)
         self.line_ax = self.line_fig.add_subplot(111)
         self.line_ax.set_facecolor('#1E1E24')
-        charts_layout.addWidget(self.line_canvas, 1)
+        
+        trend_layout.addWidget(self.line_canvas)
+        charts_layout.addWidget(trend_container, 1)
         
         layout.addLayout(charts_layout)
 
@@ -433,7 +455,7 @@ class DashboardView(QWidget):
         self.pie_fig.tight_layout()
         self.pie_canvas.draw()
 
-    def update_line_chart(self):
+    def update_line_chart(self, *_):
         self.line_ax.clear()
         
         trend_data = self.controller.get_trend_data(self.current_year, self.current_month, 6)
@@ -444,12 +466,19 @@ class DashboardView(QWidget):
         balances = [i - e for i, e in zip(incomes, expenses)]
         
         x = np.arange(len(labels))
-        width = 0.35
         
-        # Plot bars or lines
-        self.line_ax.plot(x, incomes, color='#2ECC71', marker='o', label=tr("INCOMES", "Ingresos"), linewidth=2)
-        self.line_ax.plot(x, expenses, color='#E74C3C', marker='o', label=tr("EXPENSES", "Gastos"), linewidth=2)
-        self.line_ax.plot(x, balances, color='#3498DB', marker='o', label=tr("FREE_MONEY", "Dinero Libre"), linewidth=2)
+        chart_type = getattr(self, 'trend_type_combo', None)
+        chart_val = chart_type.currentText() if chart_type else "Líneas"
+
+        if chart_val == "Líneas":
+            self.line_ax.plot(x, incomes, color='#2ECC71', marker='o', label=tr("INCOMES", "Ingresos"), linewidth=2)
+            self.line_ax.plot(x, expenses, color='#E74C3C', marker='o', label=tr("EXPENSES", "Gastos"), linewidth=2)
+            self.line_ax.plot(x, balances, color='#3498DB', marker='o', label=tr("FREE_MONEY", "Dinero Libre"), linewidth=2)
+        elif chart_val == "Barras":
+            width = 0.25
+            self.line_ax.bar(x - width, incomes, width, label=tr("INCOMES", "Ingresos"), color='#2ECC71')
+            self.line_ax.bar(x, expenses, width, label=tr("EXPENSES", "Gastos"), color='#E74C3C')
+            self.line_ax.bar(x + width, balances, width, label=tr("FREE_MONEY", "Dinero Libre"), color='#3498DB')
         
         self.line_ax.set_xticks(x)
         
@@ -496,16 +525,16 @@ class DashboardView(QWidget):
         
         # Plot stacked bar
         # Gastos first (Red)
-        self.bar_ax.barh([0], [total_expense], color='#E74C3C', height=0.4, label=f'{tr("EXPENSES")} ({expense_pct:.1f}%)')
+        self.bar_ax.barh([0], [total_expense], color='#E74C3C', height=0.7, label=f'{tr("EXPENSES")} ({expense_pct:.1f}%)')
         # Dinero libre second (Blue)
         if free_money > 0:
-            self.bar_ax.barh([0], [free_money], left=[total_expense], color='#3498DB', height=0.4, label=f'{tr("FREE_MONEY")} ({free_pct:.1f}%)')
+            self.bar_ax.barh([0], [free_money], left=[total_expense], color='#3498DB', height=0.7, label=f'{tr("FREE_MONEY")} ({free_pct:.1f}%)')
             
         self.bar_ax.axis('off')
-        self.bar_ax.set_ylim(-0.5, 0.5)
+        self.bar_ax.set_ylim(-1.2, 1.2)
         
         # Title/Text instead of legend might look better, but let's use a nice title
-        self.bar_ax.set_title(tr("PROPORTION_TITLE", "Proporción Gastos vs Dinero Libre"), color='#A0A0A0', fontsize=11, pad=10)
-        self.bar_ax.legend(loc='lower center', bbox_to_anchor=(0.5, -0.4), ncol=2, facecolor='#1E1E24', edgecolor='#2C2C35', labelcolor='white', frameon=False)
+        self.bar_ax.set_title(tr("PROPORTION_TITLE", "Proporción Gastos vs Dinero Libre del Mes"), color='#A0A0A0', fontsize=12, pad=15)
+        self.bar_ax.legend(loc='lower center', bbox_to_anchor=(0.5, -0.3), ncol=2, facecolor='#1E1E24', edgecolor='#2C2C35', labelcolor='white', frameon=False, fontsize=11)
         self.bar_fig.tight_layout()
         self.bar_canvas.draw()

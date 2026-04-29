@@ -265,6 +265,9 @@ class FinanceController:
     def delete_commitment(self, c_id):
         self.db.delete_commitment(c_id)
 
+    def update_commitment(self, c_id, name, total_amount, date):
+        self.db.update_commitment(c_id, name, total_amount, date)
+
     def add_commitment_payment(self, commitment_id, amount, date):
         return self.db.add_commitment_payment(commitment_id, amount, date)
 

@@ -5,6 +5,7 @@ from database.db_manager import DBManager
 from controllers.finance_controller import FinanceController
 from ui.login_view import LoginWindow
 from ui.main_window import MainWindow
+from ui.splash_view import VideoSplashScreen
 from utils.translator import Translator
 
 class AppOrchestrator:
@@ -12,12 +13,28 @@ class AppOrchestrator:
         self.controller = controller
         self.main_window = None
         self.login_window = None
+        self.splash = None
 
     def start(self):
         self.login_window = LoginWindow(self.controller, self.on_login_success)
         self.login_window.show()
 
     def on_login_success(self):
+        # Resolve video path
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.dirname(__file__)
+            
+        video_path = os.path.join(base_path, "ui", "resources", "splash_video.mp4")
+        
+        if os.path.exists(video_path):
+            self.splash = VideoSplashScreen(video_path, self.on_splash_finished)
+            self.splash.show()
+        else:
+            self.on_splash_finished()
+
+    def on_splash_finished(self):
         self.main_window = MainWindow(self.controller)
         self.main_window.show()
 

@@ -188,6 +188,12 @@ class CommitmentView(QWidget):
             actions_layout.setContentsMargins(4, 4, 4, 4)
             actions_layout.setSpacing(4)
 
+            btn_edit = QPushButton("✏️ " + tr("EDIT", "Editar"))
+            btn_edit.setProperty("role", "table-edit")
+            btn_edit.setFixedHeight(32)
+            btn_edit.clicked.connect(lambda checked, c_id=c.id, name=c.name, amount=c.total_amount, date=c.date: self.show_edit_dialog(c_id, name, amount, date))
+            actions_layout.addWidget(btn_edit)
+
             if data['remaining'] > 0:
                 btn_plan = QPushButton(tr("PAYMENT_PLAN"))
                 btn_plan.setProperty("role", "table-link")
@@ -243,6 +249,54 @@ class CommitmentView(QWidget):
                 self.controller.add_commitment(name, amount, date)
                 self.refresh_data()
                 dialog.accept()
+            except ValueError:
+                QMessageBox.warning(dialog, tr("ERROR"), tr("INVALID_AMOUNT"))
+                
+        btn_save.clicked.connect(save)
+        dialog.exec()
+
+    def show_edit_dialog(self, c_id, current_name, current_amount, current_date):
+        dialog = QDialog(self)
+        dialog.setWindowTitle(tr("EDIT", "Editar") + " " + tr("COMMITMENT", "Compromiso"))
+        dialog.setFixedWidth(380)
+        
+        layout = QFormLayout(dialog)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(12)
+        
+        name_input = QLineEdit()
+        name_input.setText(current_name)
+        
+        amount_input = QLineEdit()
+        amount_input.setText(f"{current_amount:.2f}")
+        
+        date_input = QDateEdit()
+        date_input.setCalendarPopup(True)
+        date_input.setDate(QDate.fromString(current_date, "yyyy-MM-dd"))
+        
+        layout.addRow(f'{tr("NAME")}:', name_input)
+        layout.addRow(f'{tr("AMOUNT")}:', amount_input)
+        layout.addRow(f'{tr("DATE")}:', date_input)
+        
+        btn_save = QPushButton(tr("SAVE", "Guardar"))
+        btn_save.setProperty("class", "action-btn")
+        layout.addRow(btn_save)
+        
+        def save():
+            name = name_input.text().strip()
+            amount_str = amount_input.text().strip().replace(',', '.')
+            date_str = date_input.date().toString("yyyy-MM-dd")
+            if not name or not amount_str:
+                QMessageBox.warning(dialog, tr("ERROR"), tr("FILL_ALL_FIELDS"))
+                return
+            try:
+                amount = float(amount_str)
+                if amount <= 0:
+                    raise ValueError
+                self.controller.update_commitment(c_id, name, amount, date_str)
+                self.refresh_data()
+                dialog.accept()
+                QMessageBox.information(self, tr("SUCCESS", "Éxito"), tr("COMMITMENT_UPDATED", "Compromiso actualizado correctamente."))
             except ValueError:
                 QMessageBox.warning(dialog, tr("ERROR"), tr("INVALID_AMOUNT"))
                 
