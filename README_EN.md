@@ -14,7 +14,10 @@
 
 ## ✨ Main Features
 
-* **Dynamic & Interactive Dashboard**: Advanced pie chart with category grouping, internal percentage labels, and informative tooltips that break down individual expenses on hover.
+* **Dynamic & Interactive Dashboard**: Advanced pie chart with category grouping, internal percentage labels, and informative tooltips. Includes trend selection between Line or Bar charts.
+* **Animated Splash Screen**: New startup experience with an introductory video after login.
+* **Full Editing**: Ability to surgically edit financial commitments, categories, and transactions.
+* **Smart Installation**: Desktop and Start Menu shortcut generator for Windows environments.
 * **Real AES-256 Encryption**: Database fields (Income, Expenses, and Commitments) are not saved in plain text. They are raw encrypted.
 * **Secure Protocol System**: Complete self-destruction of the local database and its master directory against hacks (5 failed authentication attempts).
 * **Commitments and Payment Plans**: You don't just record past expenses. The "Commitments" system takes ownership of your long-term debts or purchases, calculating your paid percentage and the mathematically estimated time remaining to finish your debt.

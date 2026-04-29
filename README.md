@@ -14,8 +14,12 @@
 
 ## ✨ Características Principales
 
-* **Dashboard Dinámico e Interactivo**: Gráfico de tarta avanzado con agrupación por categorías, etiquetas internas de porcentaje y tooltips informativos que desglosan los gastos individuales al pasar el ratón.
+* **Dashboard Dinámico e Interactivo**: Gráfico de tarta avanzado con agrupación por categorías, etiquetas internas de porcentaje y tooltips informativos que desglosan los gastos individuales. Incluye selector de tendencias entre gráficos de Líneas o Barras.
+* **Splash Screen Animada**: Nueva experiencia de inicio con video introductorio tras el login.
+* **Edición Integral**: Capacidad para editar compromisos financieros, categorías y transacciones de forma quirúrgica.
+* **Instalación Inteligente**: Generador de accesos directos para Escritorio y Menú Inicio en entornos Windows.
 * **Cifrado Real AES-256**: Los campos de la base de datos (Ingresos, Gastos y Compromisos) no se guardan en texto plano. Están encriptados en crudo.
+
 * **Sistema de Protocolo Seguro**: Autodestrucción completa de la base de datos local y su directorio maestro a prueba de hackeos (5 intentos fallidos de autenticación).
 * **Compromisos y Planes de Pago**: No solo registras gastos pasados. El sistema de 'Compromisos' se adueña de tus deudas grandes o compras a plazos, calculando tu porcentaje pagado y el tiempo restante estimado matemáticamente para terminar tu deuda.
 * **Huchas y Metas de Ahorro**: El reverso de los compromisos. Crea huchas con meta (ej: Viaje) o sin techo (ej: Fondo de Emergencia). Cada aportación cuenta como un gasto para tu bolsillo pero como un éxito para tu meta.
